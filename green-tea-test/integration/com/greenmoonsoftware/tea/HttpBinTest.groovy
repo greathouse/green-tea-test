@@ -20,11 +20,22 @@ class HttpBinTest extends GroovyTestCase {
 	}
 	
 	void test_Post() {
-		tea.post('/post', ["name":"Value"] as Map)
+		tea.post('/post', ["name":"Value"])
 		.expectStatus(200)
 		.verifyResponse { json ->
 			assert json.json.name == "Value"
 		}
 		.brew()
+	}
+	
+	void test_ResponseHeaders() {
+		def expectedKey = "X-Green-Tea-Test"
+		def expectedValue = "Relax"
+		tea.get('/response-headers', ["$expectedKey":expectedValue])
+		.expectStatus(200)
+		.verifyHeaders { headers ->
+			assert expectedValue == headers."$expectedKey"
+		}
+		.brew() 
 	}
 }

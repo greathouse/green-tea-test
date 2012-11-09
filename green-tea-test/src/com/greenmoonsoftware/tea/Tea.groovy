@@ -7,7 +7,8 @@ class Tea {
 	def host
 	private def action
 	private List asserts = []
-	private Closure verify
+	private Closure verifyResponseClosure
+	private Closure verifyHeadersClosure
 	
 	def Tea(String host) {
 		this.host = host
@@ -33,14 +34,18 @@ class Tea {
 			a.eval(response)
 		}
 		
-		if (verify) {
-			verify(response.data)
+		if (verifyHeadersClosure) {
+			verifyHeadersClosure(response.headers)
+		}
+		
+		if (verifyResponseClosure) {
+			verifyResponseClosure(response.data)
 		}
 		new Result(condition: (asserts.size() == 0)?Result.Condition.WARN : Result.Condition.SUCCESS)	
 	}
 	
-	def Tea get(String url) {
-		action = [method:"get", params:[path:url]]
+	def Tea get(String url, Map query = null) {
+		action = [method:"get", params:[path:url, query:query]]
 		return this;
 	}
 	
@@ -57,7 +62,12 @@ class Tea {
 	}
 	
 	def verifyResponse(Closure c) {
-		verify = c
+		verifyResponseClosure = c
+		return this
+	}
+	
+	def verifyHeaders(Closure c) {
+		verifyHeadersClosure = c
 		return this
 	}
 }
