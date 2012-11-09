@@ -10,6 +10,9 @@ class HttpBinTest extends GroovyTestCase {
 	void test_GetWithExpectStatus() {
 		tea.get('/get')
 		.expectStatus(200)
+		.verifyResponse { json ->
+			assert "http://httpbin.org/get" == json.url
+		}
 		.brew() 
 	}
 	
