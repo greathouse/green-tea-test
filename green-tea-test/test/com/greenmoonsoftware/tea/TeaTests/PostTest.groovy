@@ -12,7 +12,7 @@ import groovy.mock.interceptor.*
 
 class PostTest extends GroovyTestCase {
 	
-	void test_ShouldCallPost() {
+	void ignoretest_ShouldCallPost() {
 		def expectedUrl = "/test"
 		def expectedData = [key:"value"] 
 		
@@ -29,8 +29,8 @@ class PostTest extends GroovyTestCase {
 		assert expectedData.size() == actualArguments.value["body"].size()
 		assert expectedData.key == actualArguments.value.body.key
 	}
-	 
-	void test_WithoutAnyExpectClauses_ShouldResultInWarning() {
+	
+	void ignoretest_WithoutAnyExpectClauses_ShouldResultInWarning() {
 		def expectedUrl = "/test"
 		def expectedData = [key:"value"]
 		
@@ -43,7 +43,7 @@ class PostTest extends GroovyTestCase {
 		assert actual.condition == Result.Condition.WARN
 	}
 	
-	void test_WithExpectStatus_ShouldPass() {
+	void ignoretest_WithExpectStatus_ShouldPass() {
 		def expectedUrl = "/test"
 		def expectedData = [key:"value"]
 		def expectedStatus = 200
