@@ -14,8 +14,8 @@ class HttpBinTest extends GroovyTestCase {
 	}
 	
 	void test_500Status() {
-		tea.get('/status/500')
-		.expectStatus(500)
+		tea.get('/status/418')
+		.expectStatus(418)
 		.brew()
 	}
 	
@@ -45,5 +45,34 @@ class HttpBinTest extends GroovyTestCase {
 		.verifyResponse { json ->
 			assert json.json.name == "Value"
 		}
+	}
+	
+	void test_OverrideUserAgent() {
+		def expectedUserAgent = "green-tea-test/1.0"
+		tea.get("/user-agent")
+		.userAgent(expectedUserAgent)
+		.verifyResponse { json ->
+			assert expectedUserAgent == json."user-agent"
+		}
+		.brew()
+	}
+	
+	void test_Delete() {
+		def expectedKey = "X-Green-Tea-Test"
+		def expectedValue = "Relax"
+		tea.delete("/delete",  ["$expectedKey":expectedValue])
+		.expectStatus(200)
+		.verifyResponse { json ->
+			assert expectedValue == json.args."$expectedKey"
+		}
+		.brew()
+	}
+	
+	void test_Delete_NoQueryParams() {
+		def expectedKey = "X-Green-Tea-Test"
+		def expectedValue = "Relax"
+		tea.delete("/delete")
+		.expectStatus(200)
+		.brew()
 	}
 }

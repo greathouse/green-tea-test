@@ -9,6 +9,7 @@ class Tea {
 	private List asserts = []
 	private Closure verifyResponseClosure
 	private Closure verifyHeadersClosure
+	private Map headers = [:]
 	
 	def Tea(String host) {
 		this.host = host
@@ -21,8 +22,14 @@ class Tea {
 	
 	def brew() {
 		def rest = new RESTClient(host)
-		def response
 		
+		if (headers) {
+			headers.each { k,v ->
+				rest.headers."${k}" = v
+			}
+		}
+		
+		def response
 		try {
 			response = rest."${action.method}"(action.params)
 		}
@@ -59,6 +66,11 @@ class Tea {
 		return this
 	}
 	
+	def Tea delete(String url, Map query = null) {
+		action = [method:"delete", params:[path:url, query:query]]
+		return this
+	}
+	
 	def expectStatus(int code) {
 		asserts.add([eval: { response ->
 			assert response.status == code  
@@ -73,6 +85,11 @@ class Tea {
 	
 	def verifyHeaders(Closure c) {
 		verifyHeadersClosure = c
+		return this
+	}
+	
+	def userAgent(String ua) {
+		headers."User-Agent" = ua
 		return this
 	}
 }
