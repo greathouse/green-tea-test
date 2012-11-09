@@ -3,19 +3,30 @@
 	<classpathentry kind="src" path="src/main/groovy"/>
 	<classpathentry kind="src" path="src/test/groovy"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry exported="true" kind="con" path="GROOVY_SUPPORT"/>
-	<classpathentry exported="true" kind="con" path="GROOVY_DSL_SUPPORT"/>
-	<classpathentry kind="lib" path="lib/junit-4.10.jar"/>
-	<classpathentry kind="lib" path="lib/mockito-all-1.9.5.jar"/>
-	<classpathentry kind="lib" path="lib/httpclient-4.1.2.jar"/>
-	<classpathentry kind="lib" path="lib/httpcore-4.1.3.jar"/>
-	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="lib/json-lib-2.4-jdk15.jar"/>
-	<classpathentry kind="lib" path="lib/xml-resolver-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/commons-collections-3.2.1.jar"/>
-	<classpathentry kind="lib" path="lib/commons-lang-2.4.jar"/>
-	<classpathentry kind="lib" path="lib/ezmorph-1.0.6.jar"/>
-	<classpathentry kind="lib" path="lib/commons-beanutils-1.8.0.jar"/>
-	<classpathentry kind="lib" path="lib/http-builder-0.6.jar"/>
+	<classpathentry kind="con" path="GROOVY_SUPPORT" exported="true"/>
+	<classpathentry kind="con" path="GROOVY_DSL_SUPPORT" exported="true"/>
 	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER" exported="true"/>
+	<classpathentry kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/org.codehaus.groovy.modules.http-builder/http-builder/0.5.2/jar/faa507c9b5f7268dd83d5d5e0098c7874091b50d/http-builder-0.5.2.jar" exported="true"/>
+	<classpathentry sourcepath="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/org.codehaus.groovy/groovy/1.8.6/source/2ac423ad404db3e3d9053c626d4c15a84cd18b73/groovy-1.8.6-sources.jar" kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/org.codehaus.groovy/groovy/1.8.6/jar/553ca93e0407c94c89b058c482a404427ac7fc72/groovy-1.8.6.jar" exported="true"/>
+	<classpathentry sourcepath="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/junit/junit/4.8.2/source/cccca612a66b8387c399be31d69daf000de2ac9e/junit-4.8.2-sources.jar" kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/junit/junit/4.8.2/jar/c94f54227b08100974c36170dcb53329435fe5ad/junit-4.8.2.jar" exported="true"/>
+	<classpathentry kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/antlr/antlr/2.7.7/jar/83cd2cd674a217ade95a4bb83a8a14f351f48bd0/antlr-2.7.7.jar" exported="true"/>
+	<classpathentry kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/asm/asm/3.2/jar/9bc1511dec6adf302991ced13303e4140fdf9ab7/asm-3.2.jar" exported="true"/>
+	<classpathentry kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/asm/asm-tree/3.2/jar/cd792e29c79d170c5d0bdd05adf5807cf6875c90/asm-tree-3.2.jar" exported="true"/>
+	<classpathentry kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/asm/asm-commons/3.2/jar/e7a19b8c60589499e35f5d2068d09013030b8891/asm-commons-3.2.jar" exported="true"/>
+	<classpathentry kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/asm/asm-util/3.2/jar/37ebfdad34d5f1f45109981465f311bbfbe82dcf/asm-util-3.2.jar" exported="true"/>
+	<classpathentry kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/asm/asm-analysis/3.2/jar/c624956db93975b7197699dcd7de6145ca7cf2c8/asm-analysis-3.2.jar" exported="true"/>
+	<classpathentry sourcepath="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/org.apache.httpcomponents/httpcore/4.0.1/source/69febd50593a006a4593ef64a697b14208a55b7b/httpcore-4.0.1-sources.jar" kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/org.apache.httpcomponents/httpcore/4.0.1/jar/e813b8722c387b22e1adccf7914729db09bcb4a9/httpcore-4.0.1.jar" exported="true"/>
+	<classpathentry sourcepath="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/commons-logging/commons-logging/1.1.1/source/f3f156cbff0e0fb0d64bfce31a352cce4a33bc19/commons-logging-1.1.1-sources.jar" kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/commons-logging/commons-logging/1.1.1/jar/5043bfebc3db072ed80fbd362e7caf00e885d8ae/commons-logging-1.1.1.jar" exported="true"/>
+	<classpathentry sourcepath="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/commons-codec/commons-codec/1.3/source/ee264b5d7a0f939d5999398c7f1ade031db3fcec/commons-codec-1.3-sources.jar" kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/commons-codec/commons-codec/1.3/jar/fd32786786e2adb664d5ecc965da47629dca14ba/commons-codec-1.3.jar" exported="true"/>
+	<classpathentry sourcepath="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/org.apache.httpcomponents/httpclient/4.0.3/source/f5ae1dde79e35ce209eb187aa54030c9a088b562/httpclient-4.0.3-sources.jar" kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/org.apache.httpcomponents/httpclient/4.0.3/jar/fcacc35075d9c3114da4c4122b42d78786135c90/httpclient-4.0.3.jar" exported="true"/>
+	<classpathentry sourcepath="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/commons-beanutils/commons-beanutils/1.8.0/source/2818502bbb50bbcbd3f57e92a2bfe4d496f37688/commons-beanutils-1.8.0-sources.jar" kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/commons-beanutils/commons-beanutils/1.8.0/jar/c651d5103c649c12b20d53731643e5fffceb536/commons-beanutils-1.8.0.jar" exported="true"/>
+	<classpathentry sourcepath="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/commons-collections/commons-collections/3.2.1/source/fa095ef874374e5b2a11f8b06c26a5d68c7cb3a4/commons-collections-3.2.1-sources.jar" kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/commons-collections/commons-collections/3.2.1/jar/761ea405b9b37ced573d2df0d1e3a4e0f9edc668/commons-collections-3.2.1.jar" exported="true"/>
+	<classpathentry sourcepath="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/commons-lang/commons-lang/2.4/source/2b8c4b3035e45520ef42033e823c7d33e4b4402c/commons-lang-2.4-sources.jar" kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/commons-lang/commons-lang/2.4/jar/16313e02a793435009f1e458fa4af5d879f6fb11/commons-lang-2.4.jar" exported="true"/>
+	<classpathentry sourcepath="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/net.sf.ezmorph/ezmorph/1.0.6/source/298992280d62b944afd0ae9bfe3329f5487dd434/ezmorph-1.0.6-sources.jar" kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/net.sf.ezmorph/ezmorph/1.0.6/jar/1e55d2a0253ea37745d33062852fd2c90027432/ezmorph-1.0.6.jar" exported="true"/>
+	<classpathentry kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/net.sf.json-lib/json-lib/2.3/jar/f35340c0a0380141f62c72b76c8fb4bfa638d8c1/json-lib-2.3-jdk15.jar" exported="true"/>
+	<classpathentry kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/xml-apis/xml-apis/1.3.03/jar/3845d5aabd62dc1954f2c0e84a799068c917ad2b/xml-apis-1.3.03.jar" exported="true"/>
+	<classpathentry sourcepath="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/xerces/xercesImpl/2.8.1/source/e9d4f5fd18622884c4e369bba570790100f70f32/xercesImpl-2.8.1-sources.jar" kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/xerces/xercesImpl/2.8.1/jar/25101e37ec0c907db6f0612cbf106ee519c1aef1/xercesImpl-2.8.1.jar" exported="true"/>
+	<classpathentry sourcepath="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/net.sourceforge.nekohtml/nekohtml/1.9.9/source/217a1f4c514287e98672a9467f5a7f4462de9fc7/nekohtml-1.9.9-sources.jar" kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/net.sourceforge.nekohtml/nekohtml/1.9.9/jar/91ae77cff4487d1b38734a29b7b40e925f1c82f1/nekohtml-1.9.9.jar" exported="true"/>
+	<classpathentry sourcepath="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/xml-resolver/xml-resolver/1.2/source/6b72432ea1c5296783007365bb7c9a6b39dfb730/xml-resolver-1.2-sources.jar" kind="lib" path="C:/Users/kofspades/.gradle/caches/artifacts-14/filestore/xml-resolver/xml-resolver/1.2/jar/3d0f97750b3a03e0971831566067754ba4bfd68c/xml-resolver-1.2.jar" exported="true"/>
 </classpath>
