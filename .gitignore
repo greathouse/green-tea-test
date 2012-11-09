@@ -4,3 +4,6 @@
 *.jar
 *.war
 *.ear
+green-tea-test/.project
+green-tea-test/.settings
+.metadata
