@@ -7,3 +7,6 @@
 green-tea-test/.project
 green-tea-test/.settings
 .metadata
+green-tea-test/.gradle
+green-tea-test//build/
+green-tea-test/build/
