@@ -54,6 +54,11 @@ class Tea {
 		return this
 	}
 	
+	def Tea put(String url, Map json = null){
+		action = [method:"put", params:[path:url, body:json, contentType : 'application/json']]
+		return this
+	}
+	
 	def expectStatus(int code) {
 		asserts.add([eval: { response ->
 			assert response.status == code  

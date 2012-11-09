@@ -38,4 +38,12 @@ class HttpBinTest extends GroovyTestCase {
 		}
 		.brew() 
 	}
+	
+	void test_Put() {
+		tea.put("/put", ["name":"Value"])
+		.expectStatus(200)
+		.verifyResponse { json ->
+			assert json.json.name == "Value"
+		}
+	}
 }
