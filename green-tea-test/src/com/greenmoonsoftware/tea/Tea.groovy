@@ -7,6 +7,7 @@ class Tea {
 	def host
 	private def action
 	private List asserts = []
+	private Closure verify
 	
 	def Tea(String host) {
 		this.host = host
@@ -31,6 +32,10 @@ class Tea {
 		asserts.each { a ->
 			a.eval(response)
 		}
+		
+		if (verify) {
+			verify(response.data)
+		}
 		new Result(condition: (asserts.size() == 0)?Result.Condition.WARN : Result.Condition.SUCCESS)	
 	}
 	
@@ -48,6 +53,11 @@ class Tea {
 		asserts.add([eval: { response ->
 			assert response.status == code  
 		}])
+		return this
+	}
+	
+	def verifyResponse(Closure c) {
+		verify = c
 		return this
 	}
 }

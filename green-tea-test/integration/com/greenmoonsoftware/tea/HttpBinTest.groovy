@@ -22,6 +22,9 @@ class HttpBinTest extends GroovyTestCase {
 	void test_Post() {
 		tea.post('/post', ["name":"Value"] as Map)
 		.expectStatus(200)
+		.verifyResponse { json ->
+			assert json.json.name == "Value"
+		}
 		.brew()
 	}
 }
