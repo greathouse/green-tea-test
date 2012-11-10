@@ -89,7 +89,7 @@ class Tea {
 	}
 	
 	def userAgent(String ua) {
-		headers."User-Agent" = ua
+		addHeader("User-Agent", ua)
 		return this
 	}
 	
@@ -102,6 +102,5 @@ class Tea {
 		def auth = "Basic " + "${username}:${password}".getBytes().encodeBase64().toString()
 		addHeader("Authorization", auth)
 		return this
-		
 	}
 }
