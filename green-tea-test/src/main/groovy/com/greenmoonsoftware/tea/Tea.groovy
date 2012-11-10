@@ -92,4 +92,9 @@ class Tea {
 		headers."User-Agent" = ua
 		return this
 	}
+	
+	def addHeader(String header, String value) {
+		headers[header] = value
+		return this
+	}
 }

@@ -81,4 +81,15 @@ class HttpBinTest extends TestCase {
 		.expectStatus(200)
 		.brew()
 	}
+	
+	void test_AddRequestHeader() {
+		def authorization = "Basic aGJtLmFwaS51c2VyOmE="
+		tea.get("/basic-auth/hbm.api.user/a")
+		.addHeader('Authorization', authorization)
+		.expectStatus(200)
+		.verifyResponse { json ->
+			assert json.authenticated == true
+		}
+		.brew()
+	}
 }
