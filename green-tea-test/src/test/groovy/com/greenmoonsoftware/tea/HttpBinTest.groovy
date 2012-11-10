@@ -92,4 +92,16 @@ class HttpBinTest extends TestCase {
 		}
 		.brew()
 	}
+	
+	void test_AddBasicAuth() {
+		def username = "hbm.api.user"
+		def password = "a"
+		tea.get("/basic-auth/${username}/${password}")
+		.basicAuth(username, password)
+		.expectStatus(200)
+		.verifyResponse { json ->
+			assert json.authenticated == true
+		}
+		.brew()
+	}
 }

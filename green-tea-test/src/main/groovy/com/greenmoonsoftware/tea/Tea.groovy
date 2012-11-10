@@ -97,4 +97,11 @@ class Tea {
 		headers[header] = value
 		return this
 	}
+	
+	def basicAuth(String username, String password) {
+		def auth = "Basic " + "${username}:${password}".getBytes().encodeBase64().toString()
+		addHeader("Authorization", auth)
+		return this
+		
+	}
 }
