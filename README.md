@@ -1,6 +1,6 @@
 Green Tea Test
 ==============
-A Groovy framework for functional testing rest services. Intended to help you relax while you test rest.
+A Groovy framework for functional testing rest services. Intended to help you relax while you REST.
 
 
 Code Samples
