@@ -10,7 +10,7 @@ repositories {
 }
 
 version = '1.0-SNAPSHOT'
-group = 'com.greenmoonsoftware.tea'
+group = 'com.greenmoonsoftware'
 install.dependsOn ':build'
 
 dependencies {
