@@ -4,9 +4,9 @@
 *.jar
 *.war
 *.ear
-green-tea-test/.project
-green-tea-test/.settings
+.project
+.settings
 .metadata
-green-tea-test/.gradle
-green-tea-test//build/
-green-tea-test/build/
+.gradle
+build/
+.classpath
