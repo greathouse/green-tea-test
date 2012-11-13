@@ -104,4 +104,14 @@ class HttpBinTest extends TestCase {
 		}
 		.brew()
 	}
+	
+	void test_LogRequest() {
+		tea.get('/get')
+		.log()
+		.expectStatus(200)
+		.verifyResponse { json ->
+			assert "http://httpbin.org/get" == json.url
+		}
+		.brew()
+	}
 }

@@ -10,6 +10,7 @@ class Tea {
 	private Closure verifyResponseClosure
 	private Closure verifyHeadersClosure
 	private Map headers = [:]
+	private log = false
 	
 	def Tea(String host) {
 		this.host = host
@@ -31,10 +32,26 @@ class Tea {
 		
 		def response
 		try {
-			response = rest."${action.method}"(action.params)
+			response = rest."${action.method}"(action.params.clone()) //copy map since RESTClient messes with the provided map
 		}
 		catch (HttpResponseException ex) {
 			response = ex.response
+		}
+		
+		if (log) {
+			println "Request URL: ${host}${action.params.path}"
+			println "Request Method: ${action.method.toUpperCase()}"
+			println "Status Code: ${response.status}"
+			println "Request Headers"
+			rest.headers.each { k, v -> println "\t${k}: ${v}" }
+			if (action.params.body) {
+				println "Request Body"
+				println "\t"+new groovy.json.JsonBuilder(action.params.body)
+			}
+			
+			println "Response Headers"
+			response.headers.each { bh -> println "\t${bh.name}: ${bh.value}" }
+			println response.data.text
 		}
 		
 		asserts.each { a ->
@@ -101,6 +118,11 @@ class Tea {
 	def basicAuth(String username, String password) {
 		def auth = "Basic " + "${username}:${password}".getBytes().encodeBase64().toString()
 		addHeader("Authorization", auth)
+		return this
+	}
+	
+	def log() {
+		log = true
 		return this
 	}
 }
