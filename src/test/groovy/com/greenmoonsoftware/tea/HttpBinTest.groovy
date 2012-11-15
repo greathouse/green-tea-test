@@ -114,4 +114,21 @@ class HttpBinTest extends TestCase {
 		}
 		.brew()
 	}
+	
+	void test_CannotBrewMultipleTimes() {
+		tea.get('/get')
+		.expectStatus(200)
+		.brew()
+		
+		try {
+			tea.get('/get')
+			.expectStatus(200)
+			.brew()
+			
+			assert false, "This should throw an exception"
+		}
+		catch (all) {
+			assert true
+		}
+	}
 }

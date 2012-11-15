@@ -11,6 +11,7 @@ class Tea {
 	private Closure verifyHeadersClosure
 	private Map headers = [:]
 	private log = false
+	private brewed = false
 	
 	def Tea(String host) {
 		this.host = host
@@ -22,6 +23,10 @@ class Tea {
 	}
 	
 	def brew() {
+		if (brewed) {
+			throw new RuntimeException("This tea is old. You cannot brew the same instance more than once.")
+		}
+		brewed = true
 		def rest = new RESTClient(host)
 		
 		if (headers) {
