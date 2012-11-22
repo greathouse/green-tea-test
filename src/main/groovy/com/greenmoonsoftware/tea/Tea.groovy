@@ -27,7 +27,12 @@ class Tea {
 			throw new RuntimeException("This tea is old. You cannot brew the same instance more than once.")
 		}
 		brewed = true
-		def rest = new RESTClient(host)
+		def (host,uri) = parseForHost(action.params.path)
+		if (host != null) { this.host = host }
+		action.params.path = uri
+		
+		
+		def rest = new RESTClient(this.host)
 		
 		if (headers) {
 			headers.each { k,v ->
@@ -71,6 +76,19 @@ class Tea {
 			verifyResponseClosure(response.data)
 		}
 		new Result(condition: (asserts.size() == 0)?Result.Condition.WARN : Result.Condition.SUCCESS)	
+	}
+	
+	private def parseForHost(String url) {
+		def host = null
+		def uri = url
+		if (url.indexOf('http') == 0) {
+			def protocalPlus = url.split('://')
+			def protocol = protocalPlus[0] 
+			def hostname = protocalPlus[1].substring(0, protocalPlus[1].indexOf('/'))
+			host = protocol+"://"+hostname
+			uri = protocalPlus[1].substring(protocalPlus[1].indexOf('/'))
+		}
+		return [host,uri]
 	}
 	
 	def Tea get(String url, Map query = null) {

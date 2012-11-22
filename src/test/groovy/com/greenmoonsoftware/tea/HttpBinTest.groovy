@@ -51,6 +51,7 @@ class HttpBinTest extends TestCase {
 		.verifyResponse { json ->
 			assert json.json.name == "Value"
 		}
+		.brew()
 	}
 	
 	void test_OverrideUserAgent() {
@@ -130,5 +131,43 @@ class HttpBinTest extends TestCase {
 		catch (all) {
 			assert true
 		}
+	}
+	
+	void test_GetWithFullUrlGiven_ShouldOverwriteBaseUrl() {
+		new Tea("http://bogus.com")
+		.get('http://httpbin.org/get')
+		.log()
+		.expectStatus(200)
+		.brew()
+	}
+	
+	void test_PostWithFullUrlGiven_ShouldOverwriteBaseUrl() {
+		new Tea("http://bogus.com").post('http://httpbin.org/post', ["name":"Value"])
+		.expectStatus(200)
+		.verifyResponse { json ->
+			assert json.json.name == "Value"
+		}
+		.brew()
+	}
+	
+	void test_PutWithFullUrlGiven_ShouldOverwriteBaseUrl() {
+		new Tea("http://bogus.com").put("http://httpbin.org/put", ["name":"Value"])
+		.expectStatus(200)
+		.verifyResponse { json ->
+			assert json.json.name == "Value"
+		}
+		.brew()
+	}
+	
+	void test_DeleteWithFullUrlGiven_ShouldOverwriteBaseUrl() {
+		def expectedKey = "X-Green-Tea-Test"
+		def expectedValue = "Relax"
+		
+		new Tea("http://bogus.com").delete("http://httpbin.org/delete",  ["$expectedKey":expectedValue])
+		.expectStatus(200)
+		.verifyResponse { json ->
+			assert expectedValue == json.args."$expectedKey"
+		}
+		.brew()
 	}
 }
