@@ -1,6 +1,6 @@
 package com.greenmoonsoftware.tea
 
-import groovyx.net.http.RESTClient
+import groovy.json.JsonOutput
 import groovyx.net.http.*
 
 class Tea {
@@ -49,7 +49,7 @@ class Tea {
 		}
 		
 		if (log) {
-			println "Request URL: ${host}${action.params.path}"
+			println "Request URL: ${this.host}${action.params.path}"
 			println "Request Method: ${action.method.toUpperCase()}"
 			println "Status Code: ${response.status}"
 			println "Request Headers"
@@ -61,7 +61,7 @@ class Tea {
 			
 			println "Response Headers"
 			response.headers.each { bh -> println "\t${bh.name}: ${bh.value}" }
-			println response.data.text
+			println JsonOutput.prettyPrint(response.data.toString())
 		}
 		
 		asserts.each { a ->
