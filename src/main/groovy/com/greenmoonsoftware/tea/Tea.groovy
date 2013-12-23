@@ -1,5 +1,6 @@
 package com.greenmoonsoftware.tea
 
+import groovy.json.JsonException
 import groovy.json.JsonOutput
 import groovyx.net.http.*
 
@@ -61,7 +62,12 @@ class Tea {
 			
 			println "Response Headers"
 			response.headers.each { bh -> println "\t${bh.name}: ${bh.value}" }
-			println JsonOutput.prettyPrint(response.data.toString())
+			try {
+				println JsonOutput.prettyPrint(response.data.toString())
+			}
+			catch(JsonException e) {
+				println response.data.text
+			}
 		}
 		
 		asserts.each { a ->
