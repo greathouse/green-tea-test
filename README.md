@@ -42,7 +42,7 @@ new Tea('http://httpbin.org')
 
 Installation
 ============
-You will need to download the source and run the gradle build.
+Green-Tea-Test is deployed to Maven Central Repository
 ```gradle
-gradle build jar
+testCompile group: 'com.greenmoonsoftware', name: 'green-tea-test', version: '0.9.1'
 ```
