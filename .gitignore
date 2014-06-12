@@ -10,3 +10,4 @@
 .gradle
 build/
 .classpath
+*.iws
