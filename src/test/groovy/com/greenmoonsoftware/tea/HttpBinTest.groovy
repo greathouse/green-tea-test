@@ -53,6 +53,14 @@ class HttpBinTest extends TestCase {
 		}
 		.brew()
 	}
+
+    void test_Patch() {
+        tea.patch("/patch", ['name':'Value'])
+        .expectStatus(200)
+        .verifyResponse { json ->
+            assert json.json.name == 'Value'
+        }
+    }
 	
 	void test_OverrideUserAgent() {
 		def expectedUserAgent = "green-tea-test/1.0"

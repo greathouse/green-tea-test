@@ -111,6 +111,11 @@ class Tea {
 		action = [method:"put", params:[path:url, body:json, contentType : 'application/json']]
 		return this
 	}
+
+    def Tea patch(String url, Map json = null) {
+        action = [method:"patch", params:[path:url, body:json, contentType : 'application/json']]
+        return this
+    }
 	
 	def Tea delete(String url, Map query = null) {
 		action = [method:"delete", params:[path:url, query:query]]
