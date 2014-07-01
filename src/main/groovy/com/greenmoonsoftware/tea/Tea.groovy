@@ -1,5 +1,6 @@
 package com.greenmoonsoftware.tea
 
+import groovy.json.JsonBuilder
 import groovy.json.JsonException
 import groovy.json.JsonOutput
 import groovyx.net.http.HttpResponseException
@@ -26,73 +27,106 @@ class Tea {
 	}
 	
 	def brew() {
-		if (brewed) {
-			throw new RuntimeException("This tea is old. You cannot brew the same instance more than once.")
-		}
-		brewed = true
-		def (host,uri) = parseForHost(action.params.path)
-		if (host != null) { this.host = host }
-		action.params.path = uri
-		
-		
+        rejectIfReused()
+        gatherHostAndUri()
+
 		def rest = new RESTClient(this.host)
-        customParsers.each {k, v ->
+        registerCustomParsers(rest)
+
+        applyHeaders(rest)
+        def response = executeHttp(rest)
+        printLog(response, rest)
+
+        evaluateAsserts(response)
+        evaluateHeaders(response)
+        evaluateResponse(response)
+		new Result(condition: (asserts.size() == 0)?Result.Condition.WARN : Result.Condition.SUCCESS)	
+	}
+
+    private evaluateResponse(response) {
+        if (verifyResponseClosure) {
+            verifyResponseClosure(response.data)
+        }
+    }
+
+    private evaluateHeaders(response) {
+        if (verifyHeadersClosure) {
+            verifyHeadersClosure(response.headers)
+        }
+    }
+
+    private evaluateAsserts(response) {
+        asserts.each { a ->
+            a.eval(response)
+        }
+    }
+
+    private printLog(response, RESTClient rest) {
+        if (log) {
+            println "Request URL: ${this.host}${action.params.path}"
+            println "Request Method: ${action.method.toUpperCase()}"
+            println "Status Code: ${response.status}"
+            println "Request Headers"
+            rest.headers.each { k, v -> println "\t${k}: ${v}" }
+            if (action.params.body) {
+                println "Request Body"
+                println "\t" + new JsonBuilder(action.params.body)
+            }
+
+            println "Response Headers"
+            response.headers.each { bh -> println "\t${bh.name}: ${bh.value}" }
+            try {
+                println JsonOutput.prettyPrint(response.data.toString())
+            }
+            catch (JsonException e) {
+                println response.data.text
+            }
+        }
+    }
+
+    private executeHttp(RESTClient rest) {
+        def response
+        try {
+            response = rest."${action.method}"(action.params.clone())
+            //copy map since RESTClient messes with the provided map
+        }
+        catch (HttpResponseException ex) {
+            response = ex.response
+        }
+        response
+    }
+
+    private applyHeaders(rest) {
+        headers.each { k, v ->
+            rest.headers."${k}" = v
+        }
+    }
+
+    private registerCustomParsers(rest) {
+        customParsers.each { k, v ->
             println "${k}"
             rest.parser."${k}" = { resp ->
                 v(rest, resp)
             }
         }
-		
-		if (headers) {
-			headers.each { k,v ->
-				rest.headers."${k}" = v
-			}
-		}
-		
-		def response
-		try {
-			response = rest."${action.method}"(action.params.clone()) //copy map since RESTClient messes with the provided map
-		}
-		catch (HttpResponseException ex) {
-			response = ex.response
-		}
-		
-		if (log) {
-			println "Request URL: ${this.host}${action.params.path}"
-			println "Request Method: ${action.method.toUpperCase()}"
-			println "Status Code: ${response.status}"
-			println "Request Headers"
-			rest.headers.each { k, v -> println "\t${k}: ${v}" }
-			if (action.params.body) {
-				println "Request Body"
-				println "\t"+new groovy.json.JsonBuilder(action.params.body)
-			}
-			
-			println "Response Headers"
-			response.headers.each { bh -> println "\t${bh.name}: ${bh.value}" }
-			try {
-				println JsonOutput.prettyPrint(response.data.toString())
-			}
-			catch(JsonException e) {
-				println response.data.text
-			}
-		}
-		
-		asserts.each { a ->
-			a.eval(response)
-		}
-		
-		if (verifyHeadersClosure) {
-			verifyHeadersClosure(response.headers)
-		}
-		
-		if (verifyResponseClosure) {
-			verifyResponseClosure(response.data)
-		}
-		new Result(condition: (asserts.size() == 0)?Result.Condition.WARN : Result.Condition.SUCCESS)	
-	}
-	
-	private def parseForHost(String url) {
+    }
+
+    private gatherHostAndUri() {
+        def (host, uri) = parseForHost(action.params.path)
+        if (host != null) {
+            this.host = host
+        }
+        action.params.path = uri
+    }
+
+    private rejectIfReused() {
+        if (brewed) {
+            throw new RuntimeException("This tea is old. You cannot brew the same instance more than once.")
+        }
+        brewed = true
+    }
+
+    private def parseForHost(String url) {
 		def host = null
 		def uri = url
 		if (url.indexOf('http') == 0) {
