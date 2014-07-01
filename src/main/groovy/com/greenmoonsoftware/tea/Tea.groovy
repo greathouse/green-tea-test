@@ -2,7 +2,8 @@ package com.greenmoonsoftware.tea
 
 import groovy.json.JsonException
 import groovy.json.JsonOutput
-import groovyx.net.http.*
+import groovyx.net.http.HttpResponseException
+import groovyx.net.http.RESTClient
 
 class Tea {
 	def host
@@ -13,6 +14,7 @@ class Tea {
 	private Map headers = [:]
 	private log = false
 	private brewed = false
+    private def customParsers = [:].withDefault { return { } }
 	
 	def Tea(String host) {
 		this.host = host
@@ -34,6 +36,12 @@ class Tea {
 		
 		
 		def rest = new RESTClient(this.host)
+        customParsers.each {k, v ->
+            println "${k}"
+            rest.parser."${k}" = { resp ->
+                v(rest, resp)
+            }
+        }
 		
 		if (headers) {
 			headers.each { k,v ->
@@ -159,4 +167,9 @@ class Tea {
 		log = true
 		return this
 	}
+
+    def withParser(String contentType, Closure createParser) {
+        customParsers[contentType] = createParser
+        this
+    }
 }

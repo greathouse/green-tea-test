@@ -178,4 +178,16 @@ class HttpBinTest extends TestCase {
 		}
 		.brew()
 	}
+
+    void test_customContentTypeParsing() {
+        new Tea('http://httpbin.org').get('http://httpbin.org/response-headers', ['content-type' : 'application/hal+json'])
+        .withParser('application/hal+json') {rest, resp ->
+            rest.parser.'application/json'
+        }
+        .expectStatus(200)
+        .verifyResponse { json ->
+            json."content-type" == 'application/hal+json'
+        }
+        .brew()
+    }
 }
