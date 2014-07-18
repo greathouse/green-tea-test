@@ -180,8 +180,8 @@ class HttpBinTest extends TestCase {
 	}
 
     void test_customContentTypeParsing() {
-        new Tea('http://httpbin.org').get('http://httpbin.org/response-headers', ['content-type' : 'application/hal+json'])
-        .withParser('application/hal+json') {rest, resp ->
+        new Tea('http://httpbin.org').get('http://httpbin.org/response-headers', ['content-type' : 'application/hal+json', 'accept' : 'application/hal+json'])
+        .withParser('application/hal+json') {rest ->
             rest.parser.'application/json'
         }
         .expectStatus(200)
