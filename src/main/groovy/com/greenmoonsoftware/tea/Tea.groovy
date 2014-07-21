@@ -105,9 +105,7 @@ class Tea {
     private registerCustomParsers(rest) {
         customParsers.each { k, v ->
             println "${k}"
-            rest.parser."${k}" = { resp ->
-                v(rest, resp)
-            }
+            rest.parser."${k}" = v(rest)
         }
     }
 
