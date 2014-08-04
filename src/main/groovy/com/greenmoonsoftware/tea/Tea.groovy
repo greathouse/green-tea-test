@@ -137,23 +137,23 @@ class Tea {
 		return [host,uri]
 	}
 	
-	def Tea get(String url, Map query = null) {
-		action = [method:"get", params:[path:url, query:query]]
+	def Tea get(String url, Map query = null, String requestContentType = 'application/json') {
+		action = [method:"get", params:[path:url, query:query, requestContentType: requestContentType]]
 		return this;
 	}
 	
-	def Tea post(String url, Map json = null){
-		action = [method:"post", params:[path:url, body:json, contentType : 'application/json']]
+	def Tea post(String url, Map json = null, String requestContentType = 'application/json'){
+		action = [method:"post", params:[path:url, body:json, requestContentType: requestContentType]]
 		return this
 	}
 	
-	def Tea put(String url, Map json = null){
-		action = [method:"put", params:[path:url, body:json, contentType : 'application/json']]
+	def Tea put(String url, Map json = null, String requestContentType = 'application/json'){
+		action = [method:"put", params:[path:url, body:json, requestContentType: requestContentType]]
 		return this
 	}
 
-    def Tea patch(String url, Map json = null) {
-        action = [method:"patch", params:[path:url, body:json, contentType : 'application/json']]
+    def Tea patch(String url, Map json = null, String requestContentType = 'application/json') {
+        action = [method:"patch", params:[path:url, body:json, requestContentType: requestContentType]]
         return this
     }
 	

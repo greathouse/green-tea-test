@@ -1,5 +1,6 @@
 package com.greenmoonsoftware.tea
 
+import groovy.json.JsonSlurper
 import junit.framework.TestCase
 
 
@@ -180,7 +181,7 @@ class HttpBinTest extends TestCase {
 	}
 
     void test_customContentTypeParsing() {
-        new Tea('http://httpbin.org').get('http://httpbin.org/response-headers', ['content-type' : 'application/hal+json', 'accept' : 'application/hal+json'])
+        tea.get('/response-headers', ['content-type' : 'application/hal+json', 'accept' : 'application/hal+json'])
         .withParser('application/hal+json') {rest ->
             rest.parser.'application/json'
         }
@@ -189,5 +190,23 @@ class HttpBinTest extends TestCase {
             json."content-type" == 'application/hal+json'
         }
         .brew()
+    }
+
+    void test_Post_xwww_form_urlencoded() {
+      tea.post('/post', [
+              'grant_type':'password'
+              , 'username': 'blah'
+              , 'password': 'otherblah'
+              , 'client_id': 'my_client'
+      ], 'application/x-www-form-urlencoded')
+      .log()
+      .expectStatus(200)
+      .verifyResponse { json ->
+              assert json.headers."Content-Type" == 'application/x-www-form-urlencoded'
+              assert json.form.client_id == 'my_client'
+              assert json.form.grant_type == 'password'
+              assert json.form.password == 'otherblah'
+              assert json.form.username == 'blah'
+      }.brew()
     }
 }

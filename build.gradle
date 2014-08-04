@@ -6,11 +6,10 @@ apply plugin: 'signing'
 
 def localMavenRepo = 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
 repositories {
-	mavenRepo url: localMavenRepo
 	mavenCentral()
 }
 
-version = '0.9.5'
+version = '0.9.6'
 group = 'com.greenmoonsoftware'
 install.dependsOn ':build'
 
@@ -78,4 +77,8 @@ uploadArchives {
            }
         }
     }
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '1.12'
 }
