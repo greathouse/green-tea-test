@@ -20,12 +20,7 @@ class Tea {
 	def Tea(String host) {
 		this.host = host
 	}
-	
-	@Deprecated
-	def Tea(def rest) {
-		this.rest = rest
-	}
-	
+
 	def brew() {
         rejectIfReused()
         gatherHostAndUri()
