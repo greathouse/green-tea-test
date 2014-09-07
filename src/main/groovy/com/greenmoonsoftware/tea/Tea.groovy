@@ -16,6 +16,7 @@ class Tea {
 	private log = false
 	private brewed = false
     private def customParsers = [:].withDefault { return { } }
+    private Closure recorder
 	
 	def Tea(String host) {
 		this.host = host
@@ -25,18 +26,40 @@ class Tea {
         rejectIfReused()
         gatherHostAndUri()
 
-		def rest = new RESTClient(this.host)
+		def rest = new GreenTeaRestClient(this.host)
         registerCustomParsers(rest)
 
         applyHeaders(rest)
         def response = executeHttp(rest)
         printLog(response, rest)
+        record(rest, response)
 
         evaluateAsserts(response)
         evaluateHeaders(response)
         evaluateResponse(response)
 		new Result(condition: (asserts.size() == 0)?Result.Condition.WARN : Result.Condition.SUCCESS)	
 	}
+
+    def record(GreenTeaRestClient rest, response) {
+        if (recorder) {
+            def request = rest.client.request
+            def reqHeaders = [:]
+            request.allHeaders.each { reqHeaders[it.name] = it.value}
+            def respHeaders = [:]
+            response.headers.each { respHeaders[it.name] = it.value}
+            def data = new HttpMetaData(
+                    host: host
+                    , uri: action.params.path
+                    , method: action.method.toUpperCase()
+                    , requestHeaders: reqHeaders
+                    , queryParameters: action.params.query
+                    , requestBody: action.params.body
+                    , responseHeaders: respHeaders
+                    , responseBody: response.data
+            )
+            recorder(data)
+        }
+    }
 
     private evaluateResponse(response) {
         if (verifyResponseClosure) {
@@ -99,7 +122,6 @@ class Tea {
 
     private registerCustomParsers(rest) {
         customParsers.each { k, v ->
-            println "${k}"
             rest.parser."${k}" = v(rest)
         }
     }
@@ -197,6 +219,11 @@ class Tea {
 
     def withParser(String contentType, Closure createParser) {
         customParsers[contentType] = createParser
+        this
+    }
+
+    def withRecorder(Closure r) {
+        recorder = r
         this
     }
 }

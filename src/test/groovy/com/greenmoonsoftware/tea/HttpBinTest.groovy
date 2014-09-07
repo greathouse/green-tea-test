@@ -17,6 +17,7 @@ class HttpBinTest extends TestCase {
 		.verifyResponse { json ->
 			assert "http://httpbin.org/get" == json.url
 		}
+        .log()
 		.brew() 
 	}
 	
@@ -208,5 +209,41 @@ class HttpBinTest extends TestCase {
               assert json.form.password == 'otherblah'
               assert json.form.username == 'blah'
       }.brew()
+    }
+
+    void test_recorder() {
+        def tea = new Tea('http://requestb.in')
+        def calledRecorder = false
+        tea.post('/19s6ddl1', [
+                key: 'value'
+                , otherKey: 'otherValue'
+        ])
+        .log()
+        .withRecorder { data ->
+            calledRecorder = true
+            assert data.host == 'http://requestb.in'
+            assert data.uri == '/19s6ddl1'
+            assert data.method == 'POST'
+            assert data.requestBody
+            assert !data.queryParameters
+            assert data.responseHeaders
+            assert data.responseBody
+        }.brew()
+
+        assert calledRecorder
+    }
+
+    void test_recorderWithGetQueryParams() {
+        boolean calledRecorder = false
+        tea.get('/get', [param: 'value'])
+        .expectStatus(200)
+        .log()
+        .withRecorder { data ->
+            calledRecorder = true
+            assert !data.requestBody
+            assert data.queryParameters
+        }.brew()
+
+        assert calledRecorder
     }
 }
