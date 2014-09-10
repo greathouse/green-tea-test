@@ -8,6 +8,7 @@ import groovyx.net.http.RESTClient
 
 class Tea {
 	def host
+	def params
 	private def action
 	private List asserts = []
 	private Closure verifyResponseClosure
@@ -18,15 +19,23 @@ class Tea {
     private def customParsers = [:].withDefault { return { } }
     private Closure recorder
 	
-	def Tea(String host) {
+	def Tea(String host, Map params = [:]) {
 		this.host = host
+		this.params = params
 	}
+
+    def configureClient(rest) {
+        def restParams = rest.client.getParams()
+        this.params.each { key, value -> restParams.setParameter(key, value) }
+        rest.client.setParams(restParams)
+    }
 
 	def brew() {
         rejectIfReused()
         gatherHostAndUri()
 
 		def rest = new GreenTeaRestClient(this.host)
+        configureClient(rest)
         registerCustomParsers(rest)
 
         applyHeaders(rest)
@@ -140,7 +149,7 @@ class Tea {
         }
         brewed = true
     }
-
+    
     private def parseForHost(String url) {
 		def host = null
 		def uri = url
