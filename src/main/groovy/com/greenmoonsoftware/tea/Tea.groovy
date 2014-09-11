@@ -7,26 +7,35 @@ import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
 
 class Tea {
-	def host
-	private def action
-	private List asserts = []
-	private Closure verifyResponseClosure
-	private Closure verifyHeadersClosure
-	private Map headers = [:]
-	private log = false
-	private brewed = false
+    def host
+    def params
+    private def action
+    private List asserts = []
+    private Closure verifyResponseClosure
+    private Closure verifyHeadersClosure
+    private Map headers = [:]
+    private log = false
+    private brewed = false
     private def customParsers = [:].withDefault { return { } }
     private Closure recorder
-	
-	def Tea(String host) {
-		this.host = host
-	}
 
-	def brew() {
+    def Tea(String host, Map params = [:]) {
+        this.host = host
+        this.params = params
+    }
+
+    def configureClient(rest) {
+        def restParams = rest.client.getParams()
+        this.params.each { key, value -> restParams.setParameter(key, value) }
+        rest.client.setParams(restParams)
+    }
+
+    def brew() {
         rejectIfReused()
         gatherHostAndUri()
 
-		def rest = new GreenTeaRestClient(this.host)
+        def rest = new GreenTeaRestClient(this.host)
+        configureClient(rest)
         registerCustomParsers(rest)
 
         applyHeaders(rest)
@@ -37,8 +46,8 @@ class Tea {
         evaluateAsserts(response)
         evaluateHeaders(response)
         evaluateResponse(response)
-		new Result(condition: (asserts.size() == 0)?Result.Condition.WARN : Result.Condition.SUCCESS)	
-	}
+        new Result(condition: (asserts.size() == 0)?Result.Condition.WARN : Result.Condition.SUCCESS)	
+    }
 
     def record(GreenTeaRestClient rest, response) {
         if (recorder) {
@@ -48,14 +57,14 @@ class Tea {
             def respHeaders = [:]
             response.headers.each { respHeaders[it.name] = it.value}
             def data = new HttpMetaData(
-                    host: host
-                    , uri: action.params.path
-                    , method: action.method.toUpperCase()
-                    , requestHeaders: reqHeaders
-                    , queryParameters: action.params.query
-                    , requestBody: action.params.body
-                    , responseHeaders: respHeaders
-                    , responseBody: response.data
+                host: host
+                , uri: action.params.path
+                , method: action.method.toUpperCase()
+                , requestHeaders: reqHeaders
+                , queryParameters: action.params.query
+                , requestBody: action.params.body
+                , responseHeaders: respHeaders
+                , responseBody: response.data
             )
             recorder(data)
         }
@@ -92,7 +101,7 @@ class Tea {
             }
 
             println "Response Headers"
-            response.headers.each { bh -> println "\t${bh.name}: ${bh.value}" }
+                response.headers.each { bh -> println "\t${bh.name}: ${bh.value}" }
             try {
                 println JsonOutput.prettyPrint(response.data.toString())
             }
@@ -142,88 +151,88 @@ class Tea {
     }
 
     private def parseForHost(String url) {
-		def host = null
-		def uri = url
-		if (url.indexOf('http') == 0) {
-			def protocalPlus = url.split('://')
-			def protocol = protocalPlus[0] 
-			def hostname = protocalPlus[1].substring(0, protocalPlus[1].indexOf('/'))
-			host = protocol+"://"+hostname
-			uri = protocalPlus[1].substring(protocalPlus[1].indexOf('/'))
-		}
-		return [host,uri]
-	}
-	
-	def Tea get(String url, Map query = null, String requestContentType = 'application/json') {
-		action = [method:"get", params:[path:url, query:query, requestContentType: requestContentType]]
-		return this;
-	}
-	
-	def Tea post(String url, Map json = null, String requestContentType = 'application/json'){
-		action = [method:"post", params:[path:url, body:json, requestContentType: requestContentType]]
-		return this
-	}
-	
-	def Tea put(String url, Map json = null, String requestContentType = 'application/json'){
-		action = [method:"put", params:[path:url, body:json, requestContentType: requestContentType]]
-		return this
-	}
+        def host = null
+        def uri = url
+        if (url.indexOf('http') == 0) {
+            def protocalPlus = url.split('://')
+            def protocol = protocalPlus[0] 
+            def hostname = protocalPlus[1].substring(0, protocalPlus[1].indexOf('/'))
+            host = protocol+"://"+hostname
+            uri = protocalPlus[1].substring(protocalPlus[1].indexOf('/'))
+        }
+        return [host,uri]
+    }
+
+    def Tea get(String url, Map query = null, String requestContentType = 'application/json') {
+        action = [method:"get", params:[path:url, query:query, requestContentType: requestContentType]]
+        return this;
+    }
+
+    def Tea post(String url, Map json = null, String requestContentType = 'application/json'){
+        action = [method:"post", params:[path:url, body:json, requestContentType: requestContentType]]
+        return this
+    }
+
+    def Tea put(String url, Map json = null, String requestContentType = 'application/json'){
+        action = [method:"put", params:[path:url, body:json, requestContentType: requestContentType]]
+        return this
+    }
 
     def Tea patch(String url, Map json = null, String requestContentType = 'application/json') {
         action = [method:"patch", params:[path:url, body:json, requestContentType: requestContentType]]
         return this
     }
-	
-	def Tea delete(String url, Map query = null) {
-		action = [method:"delete", params:[path:url, query:query]]
-		return this
-	}
-	
-	def expectStatus(int code) {
-		asserts.add([eval: { response ->
-			assert response.status == code  
-		}])
-		return this
-	}
-	
-	def verifyResponse(Closure c) {
-		verifyResponseClosure = c
-		return this
-	}
-	
-	def verifyHeaders(Closure c) {
-		verifyHeadersClosure = c
-		return this
-	}
-	
-	def userAgent(String ua) {
-		addHeader("User-Agent", ua)
-		return this
-	}
-	
-	def addHeader(String header, String value) {
-		headers[header] = value
-		return this
-	}
-	
-	def basicAuth(String username, String password) {
-		def auth = "Basic " + "${username}:${password}".getBytes().encodeBase64().toString()
-		addHeader("Authorization", auth)
-		return this
-	}
-	
-	def log() {
-		log = true
-		return this
-	}
+
+    def Tea delete(String url, Map query = null) {
+        action = [method:"delete", params:[path:url, query:query]]
+        return this
+    }
+
+    def expectStatus(int code) {
+        asserts.add([eval: { response ->
+            assert response.status == code  
+        }])
+        return this
+    }
+
+    def verifyResponse(Closure c) {
+        verifyResponseClosure = c
+        return this
+    }
+
+    def verifyHeaders(Closure c) {
+        verifyHeadersClosure = c
+        return this
+    }
+
+    def userAgent(String ua) {
+        addHeader("User-Agent", ua)
+        return this
+    }
+
+    def addHeader(String header, String value) {
+        headers[header] = value
+        return this
+    }
+
+    def basicAuth(String username, String password) {
+        def auth = "Basic " + "${username}:${password}".getBytes().encodeBase64().toString()
+        addHeader("Authorization", auth)
+        return this
+    }
+
+    def log() {
+        log = true
+        return this
+    }
 
     def withParser(String contentType, Closure createParser) {
         customParsers[contentType] = createParser
-        this
+        return this
     }
 
     def withRecorder(Closure r) {
         recorder = r
-        this
+        return this
     }
 }
