@@ -1,13 +1,17 @@
 package com.greenmoonsoftware.tea
 
 import groovy.json.JsonBuilder
+import groovy.xml.XmlUtil
 
 class JsonRecorder {
     final static queryEncoders = [
             'application/x-www-form-urlencoded': JsonRecorder.&urlEncode
+            , 'application/xml': JsonRecorder.&xmlEncode
+            , 'application/json' : JsonRecorder.&jsonEncode
+            , 'application/hal+json' : JsonRecorder.&jsonEncode
     ].withDefault {
         { query ->
-            new JsonBuilder(query).toString()
+            query.toString()
         }
     }
 
@@ -23,17 +27,18 @@ class JsonRecorder {
             ]
             , response: [
                 headers: data.responseHeaders
+                , status: data.responseStatus
                 , 'body': data.responseBody.toString()
             ]
         ]
         new groovy.json.JsonBuilder(json).toPrettyString()
     }
 
-    private static String extractContentType(requestHeaders) {
+    static String extractContentType(requestHeaders) {
         requestHeaders.find { k, v -> k.toLowerCase() == 'content-type'}?.value
     }
 
-    private static encodeBody(contentType, body) {
+    static encodeBody(contentType, body) {
         def encoder = queryEncoders[contentType]
         encoder(body)
     }
@@ -43,4 +48,12 @@ class JsonRecorder {
         params.collect { "${encode(it.key)}=${encode(it.value)}" }.join('&')
     }
 
+    private static xmlEncode(node) {
+        XmlUtil.serialize(node).toString()
+
+    }
+
+    private static jsonEncode(json) {
+        new JsonBuilder(json).toString()
+    }
 }
