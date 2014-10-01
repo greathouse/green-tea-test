@@ -17,7 +17,7 @@ class Tea {
     private log = false
     private brewed = false
     private def customParsers = [:].withDefault { return { } }
-    private Closure recorder
+    private List<Closure> recorders = []
 
     def Tea(String host, Map params = [:]) {
         this.host = host
@@ -40,7 +40,7 @@ class Tea {
 
         applyHeaders(rest)
         def response = executeHttp(rest)
-        printLog(response, rest)
+//        printLog(response, rest)
         record(rest, response)
 
         evaluateAsserts(response)
@@ -50,7 +50,7 @@ class Tea {
     }
 
     def record(GreenTeaRestClient rest, response) {
-        if (recorder) {
+        if (recorders) {
             def request = rest.client.request
             def reqHeaders = [:]
             request.allHeaders.each { reqHeaders[it.name] = it.value}
@@ -60,13 +60,16 @@ class Tea {
                 host: host
                 , uri: action.params.path
                 , method: action.method.toUpperCase()
+                , responseStatus: response.status
                 , requestHeaders: reqHeaders
                 , queryParameters: action.params.query
                 , requestBody: action.params.body
                 , responseHeaders: respHeaders
                 , responseBody: response.data
             )
-            recorder(data)
+            recorders.each {
+                it(data)
+            }
         }
     }
 
@@ -88,30 +91,31 @@ class Tea {
         }
     }
 
-    private printLog(response, RESTClient rest) {
-        if (log) {
-            println "Request URL: ${this.host}${action.params.path}"
-            println "Request Method: ${action.method.toUpperCase()}"
-            println "Status Code: ${response.status}"
-            println "Request Headers"
-            rest.headers.each { k, v -> println "\t${k}: ${v}" }
-            if (action.params.query) {
-                println "Request Query Params"
-                println "\t" + new JsonBuilder(action.params.query)
-            }
-            if (action.params.body) {
-                println "Request Body"
-                println "\t" + new JsonBuilder(action.params.body)
-            }
+    private printLog(HttpMetaData metaData) {
+        println "Request URL: ${metaData.host}${metaData.uri}"
+        println "Request Method: ${metaData.method.toUpperCase()}"
+        println "Status Code: ${metaData.responseStatus}"
+        println "Request Headers"
+        metaData.requestHeaders.each { k, v -> println "\t${k}: ${v}" }
+        if (action.params.query) {
+            println "Request Query Params"
+            println "\t" + new JsonBuilder(action.params.query)
+        }
+        if (action.params.body) {
+            println "Request Body"
+            println "\t" + new JsonBuilder(action.params.body)
+        }
 
-            println "Response Headers"
-                response.headers.each { bh -> println "\t${bh.name}: ${bh.value}" }
-            try {
-                println JsonOutput.prettyPrint(response.data.toString())
-            }
-            catch (JsonException e) {
-                println response.data.text
-            }
+        println "Response Headers"
+        metaData.responseHeaders.each { k,v -> println "\t${k}: ${v}" }
+
+        def responseContentType = JsonRecorder.extractContentType(metaData.responseHeaders)
+        def responseBody = JsonRecorder.encodeBody(responseContentType, metaData.responseBody)
+        try {
+            println JsonOutput.prettyPrint(responseBody)
+        }
+        catch (JsonException e) {
+            println responseBody
         }
     }
 
@@ -226,7 +230,7 @@ class Tea {
     }
 
     def log() {
-        log = true
+        recorders << this.&printLog
         return this
     }
 
@@ -236,7 +240,7 @@ class Tea {
     }
 
     def withRecorder(Closure r) {
-        recorder = r
+        recorders << r
         return this
     }
 }

@@ -117,6 +117,8 @@ class HttpBinTest extends TestCase {
 	}
 	
 	void test_LogRequest() {
+
+        System.out
 		tea.get('/get')
 		.log()
 		.expectStatus(200)
@@ -218,8 +220,9 @@ class HttpBinTest extends TestCase {
                 key: 'value'
                 , otherKey: 'otherValue'
         ])
-        .log()
+//        .log()
         .withRecorder { data ->
+            println JsonRecorder.record(data)
             calledRecorder = true
             assert data.host == 'http://requestb.in'
             assert data.uri == '/19s6ddl1'
@@ -245,5 +248,12 @@ class HttpBinTest extends TestCase {
         }.brew()
 
         assert calledRecorder
+    }
+
+    void test_xml() {
+        tea.get('/xml')
+        .expectStatus(200)
+        .log()
+        .brew()
     }
 }
