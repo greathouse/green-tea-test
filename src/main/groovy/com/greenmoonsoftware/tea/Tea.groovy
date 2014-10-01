@@ -95,6 +95,10 @@ class Tea {
             println "Status Code: ${response.status}"
             println "Request Headers"
             rest.headers.each { k, v -> println "\t${k}: ${v}" }
+            if (action.params.query) {
+                println "Request Query Params"
+                println "\t" + new JsonBuilder(action.params.query)
+            }
             if (action.params.body) {
                 println "Request Body"
                 println "\t" + new JsonBuilder(action.params.body)
