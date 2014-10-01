@@ -97,6 +97,10 @@ class Tea {
         println "Status Code: ${metaData.responseStatus}"
         println "Request Headers"
         metaData.requestHeaders.each { k, v -> println "\t${k}: ${v}" }
+        if (action.params.query) {
+            println "Request Query Params"
+            println "\t" + new JsonBuilder(action.params.query)
+        }
         if (action.params.body) {
             println "Request Body"
             println "\t" + new JsonBuilder(action.params.body)
