@@ -13,3 +13,4 @@ build/
 *.iws
 .idea/
 *.iml
+.DS_Store
