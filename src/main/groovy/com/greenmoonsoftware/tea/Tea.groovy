@@ -40,13 +40,12 @@ class Tea {
 
         applyHeaders(rest)
         def response = executeHttp(rest)
-//        printLog(response, rest)
         record(rest, response)
 
         evaluateAsserts(response)
         evaluateHeaders(response)
         evaluateResponse(response)
-        new Result(condition: (asserts.size() == 0)?Result.Condition.WARN : Result.Condition.SUCCESS)	
+        new Result(condition: (asserts.size() == 0)?Result.Condition.WARN : Result.Condition.SUCCESS)
     }
 
     def record(GreenTeaRestClient rest, response) {
@@ -163,7 +162,7 @@ class Tea {
         def uri = url
         if (url.indexOf('http') == 0) {
             def protocalPlus = url.split('://')
-            def protocol = protocalPlus[0] 
+            def protocol = protocalPlus[0]
             def hostname = protocalPlus[1].substring(0, protocalPlus[1].indexOf('/'))
             host = protocol+"://"+hostname
             uri = protocalPlus[1].substring(protocalPlus[1].indexOf('/'))
@@ -198,7 +197,7 @@ class Tea {
 
     def expectStatus(int code) {
         asserts.add([eval: { response ->
-            assert response.status == code  
+            assert response.status == code
         }])
         return this
     }
