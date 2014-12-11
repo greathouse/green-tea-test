@@ -50,7 +50,6 @@ class JsonRecorder {
 
     private static xmlEncode(node) {
         XmlUtil.serialize(node).toString()
-
     }
 
     private static jsonEncode(json) {

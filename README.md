@@ -14,7 +14,7 @@ new Tea('http://httpbin.org')
 .verifyResponse { json ->
 	assert "http://httpbin.org/get" == json.url
 }
-.brew() 
+.brew()
 
 new Tea('http://httpbin.org')
 .post('/post', ["name":"Value"])
@@ -44,5 +44,5 @@ Installation
 ============
 Green-Tea-Test is deployed to Maven Central Repository
 ```gradle
-testCompile group: 'com.greenmoonsoftware', name: 'green-tea-test', version: '0.9.1'
+testCompile group: 'com.greenmoonsoftware', name: 'green-tea-test', version: '1.0.2'
 ```
