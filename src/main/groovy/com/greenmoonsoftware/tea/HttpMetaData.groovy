@@ -6,7 +6,7 @@ class HttpMetaData {
     String method = ''
     Map requestHeaders = [:]
     Map queryParameters = [:]
-    Map requestBody = [:]
+    def requestBody = [:]
     Map responseHeaders = [:]
     def responseBody
     String responseStatus = ''
