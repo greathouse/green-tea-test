@@ -9,5 +9,5 @@ class HttpMetaData {
     def requestBody = [:]
     Map responseHeaders = [:]
     def responseBody
-    String responseStatus = ''
+    int responseStatus
 }
