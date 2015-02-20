@@ -44,5 +44,5 @@ Installation
 ============
 Green-Tea-Test is deployed to Maven Central Repository
 ```gradle
-testCompile group: 'com.greenmoonsoftware', name: 'green-tea-test', version: '1.0.2'
+testCompile group: 'com.greenmoonsoftware', name: 'green-tea-test', version: '1.0.5'
 ```
