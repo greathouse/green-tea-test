@@ -178,17 +178,17 @@ class Tea {
         return this;
     }
 
-    def Tea post(String url, Map json = null, String requestContentType = 'application/json'){
+    def Tea post(String url, Object json = null, String requestContentType = 'application/json'){
         action = [method:"post", params:[path:url, body:json, requestContentType: requestContentType]]
         return this
     }
 
-    def Tea put(String url, Map json = null, String requestContentType = 'application/json'){
+    def Tea put(String url, Object json = null, String requestContentType = 'application/json'){
         action = [method:"put", params:[path:url, body:json, requestContentType: requestContentType]]
         return this
     }
 
-    def Tea patch(String url, Map json = null, String requestContentType = 'application/json') {
+    def Tea patch(String url, Object json = null, String requestContentType = 'application/json') {
         action = [method:"patch", params:[path:url, body:json, requestContentType: requestContentType]]
         return this
     }
