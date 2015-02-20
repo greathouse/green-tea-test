@@ -46,3 +46,16 @@ Green-Tea-Test is deployed to Maven Central Repository
 ```gradle
 testCompile group: 'com.greenmoonsoftware', name: 'green-tea-test', version: '1.0.5'
 ```
+
+Contributions
+=============
+Contributions are welcome. Simply do the following:
+
+`git clone https://github.com/greathouse/green-tea-test.git`
+
+`./gradlew test`
+
+License
+=======
+Copyright © 2015 Robert Greathouse http://www.greenmoonsoftware.com/
+This project is licensed under The Apache Software License, Version 2.0.
