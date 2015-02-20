@@ -6,11 +6,11 @@ import junit.framework.TestCase
 
 class HttpBinTest extends TestCase {
 	Tea tea
-	
+
 	void setUp() {
 		tea = new Tea('http://httpbin.org')
 	}
-	
+
 	void test_GetWithExpectStatus() {
 		tea.get('/get')
 		.expectStatus(200)
@@ -18,15 +18,15 @@ class HttpBinTest extends TestCase {
 			assert "http://httpbin.org/get" == json.url
 		}
         .log()
-		.brew() 
+		.brew()
 	}
-	
+
 	void test_418Status() {
 		tea.get('/status/418')
 		.expectStatus(418)
 		.brew()
 	}
-	
+
 	void test_Post() {
 		tea.post('/post', ["name":"Value"])
 		.expectStatus(200)
@@ -35,7 +35,7 @@ class HttpBinTest extends TestCase {
 		}
 		.brew()
 	}
-	
+
 	void test_ResponseHeaders() {
 		def expectedKey = "X-Green-Tea-Test"
 		def expectedValue = "Relax"
@@ -44,9 +44,9 @@ class HttpBinTest extends TestCase {
 		.verifyHeaders { headers ->
 			assert expectedValue == headers."$expectedKey"
 		}
-		.brew() 
+		.brew()
 	}
-	
+
 	void test_Put() {
 		tea.put("/put", ["name":"Value"])
 		.expectStatus(200)
@@ -63,7 +63,7 @@ class HttpBinTest extends TestCase {
             assert json.json.name == 'Value'
         }
     }
-	
+
 	void test_OverrideUserAgent() {
 		def expectedUserAgent = "green-tea-test/1.0"
 		tea.get("/user-agent")
@@ -73,7 +73,7 @@ class HttpBinTest extends TestCase {
 		}
 		.brew()
 	}
-	
+
 	void test_Delete() {
 		def expectedKey = "X-Green-Tea-Test"
 		def expectedValue = "Relax"
@@ -84,7 +84,7 @@ class HttpBinTest extends TestCase {
 		}
 		.brew()
 	}
-	
+
 	void test_Delete_NoQueryParams() {
 		def expectedKey = "X-Green-Tea-Test"
 		def expectedValue = "Relax"
@@ -92,7 +92,7 @@ class HttpBinTest extends TestCase {
 		.expectStatus(200)
 		.brew()
 	}
-	
+
 	void test_AddRequestHeader() {
 		def authorization = "Basic aGJtLmFwaS51c2VyOmE="
 		tea.get("/basic-auth/hbm.api.user/a")
@@ -103,7 +103,7 @@ class HttpBinTest extends TestCase {
 		}
 		.brew()
 	}
-	
+
 	void test_AddBasicAuth() {
 		def username = "hbm.api.user"
 		def password = "a"
@@ -115,7 +115,7 @@ class HttpBinTest extends TestCase {
 		}
 		.brew()
 	}
-	
+
 	void test_LogRequest() {
 
         System.out
@@ -127,24 +127,24 @@ class HttpBinTest extends TestCase {
 		}
 		.brew()
 	}
-	
+
 	void test_CannotBrewMultipleTimes() {
 		tea.get('/get')
 		.expectStatus(200)
 		.brew()
-		
+
 		try {
 			tea.get('/get')
 			.expectStatus(200)
 			.brew()
-			
+
 			assert false, "This should throw an exception"
 		}
 		catch (all) {
 			assert true
 		}
 	}
-	
+
 	void test_GetWithFullUrlGiven_ShouldOverwriteBaseUrl() {
 		new Tea("http://bogus.com")
 		.get('http://httpbin.org/get')
@@ -152,7 +152,7 @@ class HttpBinTest extends TestCase {
 		.expectStatus(200)
 		.brew()
 	}
-	
+
 	void test_PostWithFullUrlGiven_ShouldOverwriteBaseUrl() {
 		new Tea("http://bogus.com").post('http://httpbin.org/post', ["name":"Value"])
 		.expectStatus(200)
@@ -161,7 +161,7 @@ class HttpBinTest extends TestCase {
 		}
 		.brew()
 	}
-	
+
 	void test_PutWithFullUrlGiven_ShouldOverwriteBaseUrl() {
 		new Tea("http://bogus.com").put("http://httpbin.org/put", ["name":"Value"])
 		.expectStatus(200)
@@ -170,11 +170,11 @@ class HttpBinTest extends TestCase {
 		}
 		.brew()
 	}
-	
+
 	void test_DeleteWithFullUrlGiven_ShouldOverwriteBaseUrl() {
 		def expectedKey = "X-Green-Tea-Test"
 		def expectedValue = "Relax"
-		
+
 		new Tea("http://bogus.com").delete("http://httpbin.org/delete",  ["$expectedKey":expectedValue])
 		.expectStatus(200)
 		.verifyResponse { json ->
@@ -255,5 +255,14 @@ class HttpBinTest extends TestCase {
         .expectStatus(200)
         .log()
         .brew()
+    }
+
+    void test_getWithQueryParamsInPath_ThrowsException() {
+        try {
+            tea.get('/get?foo=bar')
+            .brew()
+        } catch (IllegalArgumentException e) {
+            assert e.message == 'URL cannot have query params. Please pass as a map as the second param to \'get\'.'
+        }
     }
 }

@@ -171,6 +171,9 @@ class Tea {
     }
 
     def Tea get(String url, Map query = null, String requestContentType = 'application/json') {
+        if(url.contains("?")) {
+            throw new IllegalArgumentException('URL cannot have query params. Please pass as a map as the second param to \'get\'.')
+        }
         action = [method:"get", params:[path:url, query:query, requestContentType: requestContentType]]
         return this;
     }
