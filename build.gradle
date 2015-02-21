@@ -8,7 +8,7 @@ repositories {
 	mavenCentral()
 }
 
-version = '1.0.5'
+version = '1.0.6'
 group = 'com.greenmoonsoftware'
 install.dependsOn ':build'
 
@@ -79,5 +79,5 @@ uploadArchives {
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '1.12'
+	gradleVersion = '2.3'
 }
