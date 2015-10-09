@@ -3,6 +3,7 @@ package com.greenmoonsoftware.tea
 import groovy.json.JsonBuilder
 import groovy.json.JsonException
 import groovy.json.JsonOutput
+import groovyx.net.http.ContentEncoding
 import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
 
@@ -26,7 +27,7 @@ class Tea {
     }
 
     def configureClient(rest) {
-        if (gzip) { rest.gzip() }
+        if (gzip) { rest.contentEncoding = ContentEncoding.Type.GZIP }
         def restParams = rest.client.getParams()
         this.params.each { key, value -> restParams.setParameter(key, value) }
         rest.client.setParams(restParams)

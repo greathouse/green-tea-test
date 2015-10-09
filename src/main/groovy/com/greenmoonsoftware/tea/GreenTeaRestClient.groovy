@@ -1,6 +1,5 @@
 package com.greenmoonsoftware.tea
 
-import groovyx.net.http.ContentEncoding
 import groovyx.net.http.RESTClient
 import org.apache.http.client.HttpClient
 import org.apache.http.params.HttpParams
@@ -18,9 +17,5 @@ class GreenTeaRestClient extends RESTClient {
         def client = getClient()
         println client.class
         client.request
-    }
-
-    void gzip() {
-        this.contentEncoding = ContentEncoding.Type.GZIP
     }
 }
