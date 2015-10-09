@@ -18,6 +18,7 @@ class Tea {
     private brewed = false
     private def customParsers = [:].withDefault { return { } }
     private List<Closure> recorders = []
+    private boolean gzip
 
     def Tea(String host, Map params = [:]) {
         this.host = host
@@ -25,6 +26,7 @@ class Tea {
     }
 
     def configureClient(rest) {
+        if (gzip) { rest.gzip() }
         def restParams = rest.client.getParams()
         this.params.each { key, value -> restParams.setParameter(key, value) }
         rest.client.setParams(restParams)
@@ -243,6 +245,12 @@ class Tea {
 
     def withRecorder(Closure r) {
         recorders << r
+        return this
+    }
+
+    def gzip() {
+        addHeader('Accept-Encoding', 'gzip')
+        gzip = true
         return this
     }
 }

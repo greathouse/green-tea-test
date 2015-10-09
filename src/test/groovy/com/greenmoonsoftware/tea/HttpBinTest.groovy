@@ -1,8 +1,5 @@
 package com.greenmoonsoftware.tea
-
-import groovy.json.JsonSlurper
 import junit.framework.TestCase
-
 
 class HttpBinTest extends TestCase {
 	Tea tea
@@ -265,4 +262,14 @@ class HttpBinTest extends TestCase {
             assert e.message == 'URL cannot have query params. Please pass as a map as the second param to \'get\'.'
         }
     }
+
+	void test_getWithGzip() {
+		tea.get('/gzip')
+		.log()
+		.gzip()
+		.verifyResponse { json ->
+			assert json.gzipped
+		}
+		.brew()
+	}
 }
