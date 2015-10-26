@@ -8,7 +8,7 @@ repositories {
 	mavenCentral()
 }
 
-version = '1.0.7'
+version = '1.0.8'
 group = 'com.greenmoonsoftware'
 install.dependsOn ':build'
 

@@ -20,6 +20,7 @@ class Tea {
     private def customParsers = [:].withDefault { return { } }
     private List<Closure> recorders = []
     private boolean gzip
+    private proxy = [:]
 
     def Tea(String host, Map params = [:]) {
         this.host = host
@@ -28,6 +29,7 @@ class Tea {
 
     def configureClient(rest) {
         if (gzip) { rest.contentEncoding = ContentEncoding.Type.GZIP }
+        if (proxy) { rest.setProxy(proxy.host, proxy.port, proxy.scheme) }
         def restParams = rest.client.getParams()
         this.params.each { key, value -> restParams.setParameter(key, value) }
         rest.client.setParams(restParams)
@@ -252,6 +254,11 @@ class Tea {
     def gzip() {
         addHeader('Accept-Encoding', 'gzip')
         gzip = true
+        return this
+    }
+
+    def proxy(String host, int port, String scheme = 'http') {
+        this.proxy = [host: host, port: port, scheme: scheme]
         return this
     }
 }
