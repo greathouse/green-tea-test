@@ -14,6 +14,7 @@ class Tea {
     private List asserts = []
     private Closure verifyResponseClosure
     private Closure verifyHeadersClosure
+    private Closure configureClientClosure
     private Map headers = [:]
     private log = false
     private brewed = false
@@ -27,19 +28,22 @@ class Tea {
         this.params = params
     }
 
-    def configureClient(rest) {
+    def configureClient(RESTClient rest) {
         if (gzip) { rest.contentEncoding = ContentEncoding.Type.GZIP }
         if (proxy) { rest.setProxy(proxy.host, proxy.port, proxy.scheme) }
         def restParams = rest.client.getParams()
         this.params.each { key, value -> restParams.setParameter(key, value) }
         rest.client.setParams(restParams)
+        if (configureClientClosure) {
+            configureClientClosure(rest)
+        }
     }
 
     def brew() {
         rejectIfReused()
         gatherHostAndUri()
 
-        def rest = new GreenTeaRestClient(this.host)
+        RESTClient rest = new GreenTeaRestClient(this.host)
         configureClient(rest)
         registerCustomParsers(rest)
 
@@ -259,6 +263,11 @@ class Tea {
 
     def proxy(String host, int port, String scheme = 'http') {
         this.proxy = [host: host, port: port, scheme: scheme]
+        return this
+    }
+    
+    def configureClient(Closure c) {
+        configureClientClosure = c
         return this
     }
 }
