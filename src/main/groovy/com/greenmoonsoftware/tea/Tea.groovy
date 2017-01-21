@@ -10,7 +10,7 @@ import groovyx.net.http.RESTClient
 class Tea {
     def host
     def params
-    private def action
+    private Map<String, ?> action
     private List asserts = []
     private Closure verifyResponseClosure
     private Closure verifyHeadersClosure
@@ -18,12 +18,12 @@ class Tea {
     private Map headers = [:]
     private log = false
     private brewed = false
-    private def customParsers = [:].withDefault { return { } }
+    private Map<String, Closure> customParsers = [:].withDefault { return { } }
     private List<Closure> recorders = []
     private boolean gzip
     private proxy = [:]
 
-    def Tea(String host, Map params = [:]) {
+    Tea(String host, Map params = [:]) {
         this.host = host
         this.params = params
     }
@@ -39,7 +39,7 @@ class Tea {
         }
     }
 
-    def brew() {
+    Result brew() {
         rejectIfReused()
         gatherHostAndUri()
 
@@ -166,7 +166,7 @@ class Tea {
         brewed = true
     }
 
-    private def parseForHost(String url) {
+    private parseForHost(String url) {
         def host = null
         def uri = url
         if (url.indexOf('http') == 0) {
@@ -179,7 +179,7 @@ class Tea {
         return [host,uri]
     }
 
-    def Tea get(String url, Map query = null, String requestContentType = 'application/json') {
+    Tea get(String url, Map query = null, String requestContentType = 'application/json') {
         if(url.contains("?")) {
             throw new IllegalArgumentException('URL cannot have query params. Please pass as a map as the second param to \'get\'.')
         }
@@ -187,86 +187,86 @@ class Tea {
         return this;
     }
 
-    def Tea post(String url, Object json = null, String requestContentType = 'application/json'){
+    Tea post(String url, Object json = null, String requestContentType = 'application/json'){
         action = [method:"post", params:[path:url, body:json, requestContentType: requestContentType]]
         return this
     }
 
-    def Tea put(String url, Object json = null, String requestContentType = 'application/json'){
+    Tea put(String url, Object json = null, String requestContentType = 'application/json'){
         action = [method:"put", params:[path:url, body:json, requestContentType: requestContentType]]
         return this
     }
 
-    def Tea patch(String url, Object json = null, String requestContentType = 'application/json') {
+    Tea patch(String url, Object json = null, String requestContentType = 'application/json') {
         action = [method:"patch", params:[path:url, body:json, requestContentType: requestContentType]]
         return this
     }
 
-    def Tea delete(String url, Map query = null) {
+    Tea delete(String url, Map query = null) {
         action = [method:"delete", params:[path:url, query:query]]
         return this
     }
 
-    def expectStatus(int code) {
+    Tea expectStatus(int code) {
         asserts.add([eval: { response ->
             assert response.status == code
         }])
         return this
     }
 
-    def verifyResponse(Closure c) {
+    Tea verifyResponse(Closure c) {
         verifyResponseClosure = c
         return this
     }
 
-    def verifyHeaders(Closure c) {
+    Tea verifyHeaders(Closure c) {
         verifyHeadersClosure = c
         return this
     }
 
-    def userAgent(String ua) {
+    Tea userAgent(String ua) {
         addHeader("User-Agent", ua)
         return this
     }
 
-    def addHeader(String header, String value) {
+    Tea addHeader(String header, String value) {
         headers[header] = value
         return this
     }
 
-    def basicAuth(String username, String password) {
+    Tea basicAuth(String username, String password) {
         def auth = "Basic " + "${username}:${password}".getBytes().encodeBase64().toString()
         addHeader("Authorization", auth)
         return this
     }
 
-    def log() {
+    Tea log() {
         recorders << this.&printLog
         return this
     }
 
-    def withParser(String contentType, Closure createParser) {
+    Tea withParser(String contentType, Closure createParser) {
         customParsers[contentType] = createParser
         return this
     }
 
-    def withRecorder(Closure r) {
+    Tea withRecorder(Closure r) {
         recorders << r
         return this
     }
 
-    def gzip() {
+    Tea gzip() {
         addHeader('Accept-Encoding', 'gzip')
         gzip = true
         return this
     }
 
-    def proxy(String host, int port, String scheme = 'http') {
+    Tea proxy(String host, int port, String scheme = 'http') {
         this.proxy = [host: host, port: port, scheme: scheme]
         return this
     }
-    
-    def configureClient(Closure c) {
+
+    Tea configureClient(Closure c) {
         configureClientClosure = c
         return this
     }
