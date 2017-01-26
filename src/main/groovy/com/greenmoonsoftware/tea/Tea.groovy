@@ -3,14 +3,17 @@ package com.greenmoonsoftware.tea
 import groovy.json.JsonBuilder
 import groovy.json.JsonException
 import groovy.json.JsonOutput
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.SimpleType
 import groovyx.net.http.ContentEncoding
+import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
 
 class Tea {
     def host
     def params
-    private def action
+    private Map<String, ?> action
     private List asserts = []
     private Closure verifyResponseClosure
     private Closure verifyHeadersClosure
@@ -18,12 +21,12 @@ class Tea {
     private Map headers = [:]
     private log = false
     private brewed = false
-    private def customParsers = [:].withDefault { return { } }
+    private Map<String, Closure> customParsers = [:].withDefault { return { } }
     private List<Closure> recorders = []
     private boolean gzip
     private proxy = [:]
 
-    def Tea(String host, Map params = [:]) {
+    Tea(String host, Map params = [:]) {
         this.host = host
         this.params = params
     }
@@ -39,7 +42,7 @@ class Tea {
         }
     }
 
-    def brew() {
+    Result brew() {
         rejectIfReused()
         gatherHostAndUri()
 
@@ -48,22 +51,22 @@ class Tea {
         registerCustomParsers(rest)
 
         applyHeaders(rest)
-        def response = executeHttp(rest)
+        HttpResponseDecorator response = executeHttp(rest)
         record(rest, response)
 
         evaluateAsserts(response)
         evaluateHeaders(response)
         evaluateResponse(response)
-        new Result(condition: (asserts.size() == 0)?Result.Condition.WARN : Result.Condition.SUCCESS)
+        new Result(condition: (asserts.size() == 0) ? Result.Condition.WARN : Result.Condition.SUCCESS)
     }
 
-    def record(GreenTeaRestClient rest, response) {
+    def record(GreenTeaRestClient rest, HttpResponseDecorator response) {
         if (recorders) {
             def request = rest.client.request
             def reqHeaders = [:]
-            request.allHeaders.each { reqHeaders[it.name] = it.value}
+            request.allHeaders.each { reqHeaders[it.name] = it.value }
             def respHeaders = [:]
-            response.headers.each { respHeaders[it.name] = it.value}
+            response.headers.each { respHeaders[it.name] = it.value }
             def data = new HttpMetaData(
                 host: host
                 , uri: action.params.path
@@ -81,19 +84,19 @@ class Tea {
         }
     }
 
-    private evaluateResponse(response) {
+    private evaluateResponse(HttpResponseDecorator response) {
         if (verifyResponseClosure) {
             verifyResponseClosure(response.data)
         }
     }
 
-    private evaluateHeaders(response) {
+    private evaluateHeaders(HttpResponseDecorator response) {
         if (verifyHeadersClosure) {
             verifyHeadersClosure(response.headers)
         }
     }
 
-    private evaluateAsserts(response) {
+    private evaluateAsserts(HttpResponseDecorator response) {
         asserts.each { a ->
             a.eval(response)
         }
@@ -115,7 +118,7 @@ class Tea {
         }
 
         println "Response Headers"
-        metaData.responseHeaders.each { k,v -> println "\t${k}: ${v}" }
+        metaData.responseHeaders.each { k, v -> println "\t${k}: ${v}" }
 
         def responseContentType = JsonRecorder.extractContentType(metaData.responseHeaders)
         def responseBody = JsonRecorder.encodeBody(responseContentType, metaData.responseBody)
@@ -127,8 +130,8 @@ class Tea {
         }
     }
 
-    private executeHttp(RESTClient rest) {
-        def response
+    private HttpResponseDecorator executeHttp(RESTClient rest) {
+        HttpResponseDecorator response
         try {
             response = rest."${action.method}"(action.params.clone())
             //copy map since RESTClient messes with the provided map
@@ -139,13 +142,13 @@ class Tea {
         response
     }
 
-    private applyHeaders(rest) {
+    private applyHeaders(RESTClient rest) {
         headers.each { k, v ->
             rest.headers."${k}" = v
         }
     }
 
-    private registerCustomParsers(rest) {
+    private registerCustomParsers(RESTClient rest) {
         customParsers.each { k, v ->
             rest.parser."${k}" = v(rest)
         }
@@ -166,107 +169,107 @@ class Tea {
         brewed = true
     }
 
-    private def parseForHost(String url) {
+    private parseForHost(String url) {
         def host = null
         def uri = url
         if (url.indexOf('http') == 0) {
             def protocalPlus = url.split('://')
             def protocol = protocalPlus[0]
             def hostname = protocalPlus[1].substring(0, protocalPlus[1].indexOf('/'))
-            host = protocol+"://"+hostname
+            host = protocol + "://" + hostname
             uri = protocalPlus[1].substring(protocalPlus[1].indexOf('/'))
         }
-        return [host,uri]
+        return [host, uri]
     }
 
-    def Tea get(String url, Map query = null, String requestContentType = 'application/json') {
-        if(url.contains("?")) {
+    Tea get(String url, Map query = null, String requestContentType = 'application/json') {
+        if (url.contains("?")) {
             throw new IllegalArgumentException('URL cannot have query params. Please pass as a map as the second param to \'get\'.')
         }
-        action = [method:"get", params:[path:url, query:query, requestContentType: requestContentType]]
+        action = [method: "get", params: [path: url, query: query, requestContentType: requestContentType]]
         return this;
     }
 
-    def Tea post(String url, Object json = null, String requestContentType = 'application/json'){
-        action = [method:"post", params:[path:url, body:json, requestContentType: requestContentType]]
+    Tea post(String url, Object json = null, String requestContentType = 'application/json') {
+        action = [method: "post", params: [path: url, body: json, requestContentType: requestContentType]]
         return this
     }
 
-    def Tea put(String url, Object json = null, String requestContentType = 'application/json'){
-        action = [method:"put", params:[path:url, body:json, requestContentType: requestContentType]]
+    Tea put(String url, Object json = null, String requestContentType = 'application/json') {
+        action = [method: "put", params: [path: url, body: json, requestContentType: requestContentType]]
         return this
     }
 
-    def Tea patch(String url, Object json = null, String requestContentType = 'application/json') {
-        action = [method:"patch", params:[path:url, body:json, requestContentType: requestContentType]]
+    Tea patch(String url, Object json = null, String requestContentType = 'application/json') {
+        action = [method: "patch", params: [path: url, body: json, requestContentType: requestContentType]]
         return this
     }
 
-    def Tea delete(String url, Map query = null) {
-        action = [method:"delete", params:[path:url, query:query]]
+    Tea delete(String url, Map query = null) {
+        action = [method: "delete", params: [path: url, query: query]]
         return this
     }
 
-    def expectStatus(int code) {
+    Tea expectStatus(int code) {
         asserts.add([eval: { response ->
             assert response.status == code
         }])
         return this
     }
 
-    def verifyResponse(Closure c) {
+    Tea verifyResponse(Closure c) {
         verifyResponseClosure = c
         return this
     }
 
-    def verifyHeaders(Closure c) {
+    Tea verifyHeaders(@ClosureParams(value = SimpleType, options = ["groovyx.net.http.HeadersDecorator"]) Closure c) {
         verifyHeadersClosure = c
         return this
     }
 
-    def userAgent(String ua) {
+    Tea userAgent(String ua) {
         addHeader("User-Agent", ua)
         return this
     }
 
-    def addHeader(String header, String value) {
+    Tea addHeader(String header, String value) {
         headers[header] = value
         return this
     }
 
-    def basicAuth(String username, String password) {
+    Tea basicAuth(String username, String password) {
         def auth = "Basic " + "${username}:${password}".getBytes().encodeBase64().toString()
         addHeader("Authorization", auth)
         return this
     }
 
-    def log() {
+    Tea log() {
         recorders << this.&printLog
         return this
     }
 
-    def withParser(String contentType, Closure createParser) {
+    Tea withParser(String contentType, @ClosureParams(value = SimpleType, options = ["groovyx.net.http.RESTClient"]) Closure createParser) {
         customParsers[contentType] = createParser
         return this
     }
 
-    def withRecorder(Closure r) {
+    Tea withRecorder(@ClosureParams(value = SimpleType, options = ["com.greenmoonsoftware.tea.HttpMetaData"]) Closure r) {
         recorders << r
         return this
     }
 
-    def gzip() {
+    Tea gzip() {
         addHeader('Accept-Encoding', 'gzip')
         gzip = true
         return this
     }
 
-    def proxy(String host, int port, String scheme = 'http') {
+    Tea proxy(String host, int port, String scheme = 'http') {
         this.proxy = [host: host, port: port, scheme: scheme]
         return this
     }
-    
-    def configureClient(Closure c) {
+
+    Tea configureClient(@ClosureParams(value = SimpleType, options = ["groovyx.net.http.RESTClient"]) Closure c) {
         configureClientClosure = c
         return this
     }
