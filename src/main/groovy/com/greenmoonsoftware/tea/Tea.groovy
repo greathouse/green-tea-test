@@ -66,7 +66,14 @@ class Tea {
             def reqHeaders = [:]
             request.allHeaders.each { reqHeaders[it.name] = it.value }
             def respHeaders = [:]
-            response.headers.each { respHeaders[it.name] = it.value }
+
+            response.headers.each {
+                if (!respHeaders.containsKey(it.name)) {
+                    respHeaders.put(it.name, [])
+                }
+                respHeaders[it.name] << it.value
+            }
+
             def data = new HttpMetaData(
                 host: host
                 , uri: action.params.path
@@ -118,7 +125,11 @@ class Tea {
         }
 
         println "Response Headers"
-        metaData.responseHeaders.each { k, v -> println "\t${k}: ${v}" }
+        metaData.responseHeaders.each { k, v ->
+            v.each {
+                println "\t${k}: ${it}"
+            }
+        }
 
         def responseContentType = JsonRecorder.extractContentType(metaData.responseHeaders)
         def responseBody = JsonRecorder.encodeBody(responseContentType, metaData.responseBody)
