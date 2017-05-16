@@ -7,7 +7,7 @@ class HttpMetaData {
     Map requestHeaders = [:]
     Map queryParameters = [:]
     def requestBody = [:]
-    Map responseHeaders = [:]
+    Map<String, List<String>> responseHeaders = [:]
     def responseBody
     int responseStatus
 }

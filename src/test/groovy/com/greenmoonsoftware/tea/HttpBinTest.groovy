@@ -44,6 +44,22 @@ class HttpBinTest extends TestCase {
 		.brew()
 	}
 
+	void test_multipleValuesForSameHeader() {
+		def expectedKey = "X-Green-Tea-Test"
+		def values = ["a", "b"]
+		tea.get('/response-headers', ["$expectedKey": values])
+		.expectStatus(200)
+		.log()
+		.verifyHeaders { headers ->
+			assert headers.findAll {
+				it.name == expectedKey
+			}*.value == values
+		}.withRecorder { HttpMetaData metaData ->
+			assert metaData.responseHeaders[expectedKey] == values
+		}
+		.brew()
+	}
+
 	void test_Put() {
 		tea.put("/put", ["name":"Value"])
 		.expectStatus(200)
