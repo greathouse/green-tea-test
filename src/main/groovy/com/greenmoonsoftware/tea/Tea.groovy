@@ -110,35 +110,38 @@ class Tea {
     }
 
     private printLog(HttpMetaData metaData) {
-        println "Request URL: ${metaData.host}${metaData.uri}"
-        println "Request Method: ${metaData.method.toUpperCase()}"
-        println "Status Code: ${metaData.responseStatus}"
-        println "Request Headers"
-        metaData.requestHeaders.each { k, v -> println "\t${k}: ${v}" }
+        def lines = []
+        lines << "Request URL: ${metaData.host}${metaData.uri}"
+        lines << "Request Method: ${metaData.method.toUpperCase()}"
+        lines << "Status Code: ${metaData.responseStatus}"
+        lines << "Request Headers"
+        metaData.requestHeaders.each { k, v -> lines << "\t${k}: ${v}" }
         if (action.params.query) {
-            println "Request Query Params"
-            println "\t" + new JsonBuilder(action.params.query)
+            lines << "Request Query Params"
+            lines << "\t" + new JsonBuilder(action.params.query)
         }
         if (action.params.body) {
-            println "Request Body"
-            println "\t" + new JsonBuilder(action.params.body)
+            lines << "Request Body"
+            lines << "\t" + new JsonBuilder(action.params.body)
         }
 
-        println "Response Headers"
+        lines << "Response Headers"
         metaData.responseHeaders.each { k, v ->
             v.each {
-                println "\t${k}: ${it}"
+                lines << "\t${k}: ${it}"
             }
         }
 
         def responseContentType = JsonRecorder.extractContentType(metaData.responseHeaders)
         def responseBody = JsonRecorder.encodeBody(responseContentType, metaData.responseBody)
         try {
-            println JsonOutput.prettyPrint(responseBody)
+            lines << JsonOutput.prettyPrint(responseBody)
         }
         catch (JsonException e) {
-            println responseBody
+            lines << responseBody
         }
+
+        println lines.join("\n")
     }
 
     private HttpResponseDecorator executeHttp(RESTClient rest) {
