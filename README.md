@@ -30,6 +30,7 @@ new Tea('http://httpbin.org')
 .verifyResponse { json ->
 	assert json.json.name == "Value"
 }
+.brew()
 
 new Tea('http://httpbin.org')
 .delete("/delete",  ["$expectedKey":expectedValue])
